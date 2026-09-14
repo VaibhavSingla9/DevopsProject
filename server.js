@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 
 app.get("/", (req, res) => {
-    res.send("DevOps application is running");
+    res.send("DevOps application is running successfully");
 });
 
 app.get("/health", (req, res) => {
