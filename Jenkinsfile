@@ -24,7 +24,13 @@ pipeline {
                         throw "Health check failed!"
                     }
 
-                    Stop-Process -Id $process.Id -Force
+                    if (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) {
+                        Stop-Process -Id $process.Id -Force
+                        Write-Host "Application stopped successfully."
+                    }
+                    else {
+                        Write-Host "Application process has already stopped."
+                    }
                 '''
             }
         }
