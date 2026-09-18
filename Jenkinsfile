@@ -8,6 +8,12 @@ pipeline {
             }
         }
 
+        stage('Docker Check') {
+            steps {
+                bat 'docker --version'
+            }
+        }
+
         stage('Test') {
             steps {
                 powershell '''
