@@ -8,7 +8,13 @@ pipeline {
             }
         }
 
-        stage('Test Pipeline') {
+        stage('Test') {
+            steps {
+                powershell 'Write-Host "Powershell is working in Jenkins"'
+            }
+        }
+
+         stage('Test Pipeline') {
             steps {
                 echo 'Jenkins pipeline is working!'
             }
