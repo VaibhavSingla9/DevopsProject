@@ -33,31 +33,39 @@ pipeline {
         }
 
         stage('Test') {
-            steps {
-                powershell '''
-                    $process = Start-Process -FilePath "node" -ArgumentList "server.js" -PassThru
+    steps {
+        powershell '''
+            $workspace = $env:WORKSPACE
 
-                    Start-Sleep -Seconds 5
+            $process = Start-Process `
+                -FilePath "node" `
+                -ArgumentList "server.js" `
+                -WorkingDirectory $workspace `
+                -PassThru
 
-                    $response = Invoke-WebRequest -Uri "http://localhost:3000/health" -UseBasicParsing
+            Start-Sleep -Seconds 5
 
-                    if ($response.StatusCode -eq 200) {
-                        Write-Host "Health check passed!"
-                    }
-                    else {
-                        throw "Health check failed!"
-                    }
+            $response = Invoke-WebRequest `
+                -Uri "http://localhost:3000/health" `
+                -UseBasicParsing
 
-                    if (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) {
-                        Stop-Process -Id $process.Id -Force
-                        Write-Host "Application stopped successfully."
-                    }
-                    else {
-                        Write-Host "Application process has already stopped."
-                    }
-                '''
+            if ($response.StatusCode -eq 200) {
+                Write-Host "Health check passed!"
             }
-        }
+            else {
+                throw "Health check failed!"
+            }
+
+            if (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) {
+                Stop-Process -Id $process.Id -Force
+                Write-Host "Application stopped successfully."
+            }
+            else {
+                Write-Host "Application process has already stopped."
+            }
+        '''
+    }
+}
 
          stage('Test Pipeline') {
             steps {
