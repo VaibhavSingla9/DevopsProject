@@ -12,7 +12,7 @@ pipeline {
             steps {
                 bat '''
                     set PATH=C:\\Users\\hp\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;%PATH%
-                    docker built -t devops-app .
+                    docker build -t devops-app .
                 '''
             }
         }
