@@ -32,7 +32,7 @@ pipeline {
             }
         }
 
-        stage('Test') {
+  stage('Test') {
     steps {
         powershell '''
             $workspace = $env:WORKSPACE
@@ -41,9 +41,28 @@ pipeline {
                 -FilePath "node" `
                 -ArgumentList "server.js" `
                 -WorkingDirectory $workspace `
-                -PassThru
+                -PassThru `
+                -RedirectStandardOutput "$workspace\\node-output.log" `
+                -RedirectStandardError "$workspace\\node-error.log"
 
             Start-Sleep -Seconds 5
+
+            Write-Host "Node process ID: $($process.Id)"
+
+            if ($process.HasExited) {
+                Write-Host "Node process exited unexpectedly."
+                Write-Host "----- Node Error -----"
+                if (Test-Path "$workspace\\node-error.log") {
+                    Get-Content "$workspace\\node-error.log"
+                }
+                Write-Host "----- Node Output -----"
+                if (Test-Path "$workspace\\node-output.log") {
+                    Get-Content "$workspace\\node-output.log"
+                }
+                throw "Node.js application failed to start."
+            }
+
+            Write-Host "Node process is still running."
 
             $response = Invoke-WebRequest `
                 -Uri "http://localhost:3000/health" `
@@ -56,13 +75,8 @@ pipeline {
                 throw "Health check failed!"
             }
 
-            if (Get-Process -Id $process.Id -ErrorAction SilentlyContinue) {
-                Stop-Process -Id $process.Id -Force
-                Write-Host "Application stopped successfully."
-            }
-            else {
-                Write-Host "Application process has already stopped."
-            }
+            Stop-Process -Id $process.Id -Force
+            Write-Host "Application stopped successfully."
         '''
     }
 }
