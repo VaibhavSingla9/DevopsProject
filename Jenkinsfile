@@ -32,6 +32,15 @@ pipeline {
             }
         }
 
+        stage('Docker Tag') {
+    steps {
+        bat '''
+            set PATH=C:\\Users\\hp\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;%PATH%
+            docker tag devops-app:latest vaibhavsingla456/devops-app:v1
+        '''
+    }
+}
+
   stage('Test') {
     steps {
         powershell '''
