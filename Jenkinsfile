@@ -12,8 +12,19 @@ pipeline {
             steps {
                 powershell '''
                     $process = Start-Process -FilePath "node" -ArgumentList "server.js" -PassThru
+
                     Start-Sleep -Seconds 5
-                    Write-Host "Application started. Process ID: $($process.Id)"
+
+                    $response = Invoke-WebRequest -Uri "http://localhost:3000/health" -UseBasicParsing
+
+                    if ($response.StatusCode -eq 200) {
+                        Write-Host "Health check passed!"
+                    }
+                    else {
+                        throw "Health check failed!"
+                    }
+
+                    Stop-Process -Id $process.Id -Force
                 '''
             }
         }
