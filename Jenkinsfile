@@ -10,7 +10,11 @@ pipeline {
 
         stage('Test') {
             steps {
-                powershell 'Write-Host "Powershell is working in Jenkins"'
+                powershell '''
+                    $process = Start-Process -FilePath "node" -ArgumentList "server.js" -PassThru
+                    Start-Sleep -Seconds 5
+                    Write-Host "Application started. Process ID: $($process.Id)"
+                '''
             }
         }
 
