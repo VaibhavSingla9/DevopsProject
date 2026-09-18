@@ -4,12 +4,10 @@ pipeline {
      stages {
         stage('Build') {
             steps {
-                bat 'nmp install'
+                bat 'npm install'
             }
         }
-    }
 
-    stages {
         stage('Test Pipeline') {
             steps {
                 echo 'Jenkins pipeline is working!'
