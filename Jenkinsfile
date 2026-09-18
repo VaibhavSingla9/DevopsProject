@@ -8,6 +8,21 @@ pipeline {
             }
         }
 
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
+                    bat '''
+                        set PATH=C:\\Users\\hp\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;%PATH%
+                        docker login -u "%DOCKER_USERNAME%" -p "%DOCKER_PASSWORD%"
+                    '''
+                }
+            }
+        }
+
         stage('Docker Check') {
             steps {
                 bat '''
