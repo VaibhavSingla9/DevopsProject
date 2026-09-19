@@ -41,6 +41,15 @@ pipeline {
     }
 }
 
+stage('Docker Push') {
+    steps {
+        bat '''
+            set PATH=C:\\Users\\hp\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;%PATH%
+            docker push vaibhavsingla456/devops-app:v1
+        '''
+    }
+}
+
   stage('Test') {
     steps {
         powershell '''
